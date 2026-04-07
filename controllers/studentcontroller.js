@@ -1,50 +1,51 @@
-let students=[
-    {id : 1, name: "Rohit"},
-    {id : 2, name: "Virat"}
-    ]
-const getstudents=(req,res)=>{
-    console.log("hit correctly");
+const Student=require("../models/Student")
+
+const getstudents= async(req,res)=>{
+     const students = await Student.find();
     res.json(students)
     };
-const addstudents=(req,res)=>{
-        const newStudent=req.body
-        students.push(newStudent);
+const addstudents= async (req,res)=>{
+        const newStudent= await Student.create({
+            name :req.body.name
+        });
+        
         res.status(201).json({
             message: "Student added sucessfully",
             student: newStudent
 
         });
     };
-const updatestudents=(req,res)=>{
-    const studentId =parseInt(req.params.id);
-    const updatedata=req.body;
-    const student = students.find(student=> student.id===studentId);
-    if (!student){
-        return res.status(404).json({
-            message:"Student Not found"
-            
+const updatestudents = async(req,res)=>{
+    const updatestudent= await Student.findByIdAndUpdate(
+        req.params.id,
+        {name: req.body.name},
+            {new : true}
+        );
+    if (! updatestudent){
+        return res.json.status(404)({
+            message:"Student not found"
+
+        });
+    } 
+    res.json({
+        message: "Student updated successfully",
+        student: updatestudent
+    });   
+} 
+const deletestudents=async (req,res)=>{
+    const deletestudent = await Student.findByIdAndDelete(req.params.id);
+    if (!deletestudent){
+        return res.json({
+            message:"Student not found"
+
         });
     }
-    student.name=updatedata.name
     res.json({
-        message:"student updates sucessfully",
-        updated: student
+        message:"Student deleted sucessfully"
 
-    })
-}; 
-const deletestudents=(req,res)=>{
-    const studentId= parseInt(req.params.id);
-    const student = students.find(student=> student.id===studentId);
-    if (!student){
-        return res.status(404).json({
-            message: "student not found"
-        });
-    }
-    students=students.filter(student=> student.id!== studentId);
-    res.json({
-        message: "deleted sucessfully"
-    })
+    });
 
+};  
+ 
 
-};
-module.exports ={addstudents,updatestudents,getstudents,deletestudents}; 
+module.exports ={addstudents,getstudents,updatestudents,deletestudents}; 
