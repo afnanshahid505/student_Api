@@ -1,4 +1,5 @@
 const Student=require("../models/Student")
+const Teacher=require("../models/Teacher")
 
 const getstudents= async(req,res)=>{
      const students = await Student.find();
@@ -46,6 +47,7 @@ const deletestudents=async (req,res)=>{
     });
 
 };  
+
  
 
 module.exports ={addstudents,getstudents,updatestudents,deletestudents}; 
