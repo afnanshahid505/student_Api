@@ -1,6 +1,8 @@
 import { useState } from "react";
-import {Link}from "react-router-dom";
+import {Link, useNavigate}from "react-router-dom";
+import axios from "axios";
 export default function Login(){
+  const navigate=useNavigate();
     const [formData,setFormData]=useState({
         email:" ",
         password:" ",
@@ -11,11 +13,23 @@ export default function Login(){
             ...formData,[e.target.name]: e.target.value,
         });
     }
-     const handleSubmit = (e) => {
+     const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Login Data:", formData);
+    try{
+      const response = await axios.post("http://localhost:5000/auth/login",
+        formData);
+        localStorage.setItem("token", response.data.token);
 
-    // Backend API integration next
+      alert("Login successful ");
+
+      navigate("/dashboard");
+    }
+    catch(error){
+      console.log("FULL LOGIN ERROR:", error);
+    console.log("BACKEND MESSAGE:", error.response?.data);
+       alert(error.response?.data?.message || "Login failed");
+    }
+  
   };
     return(
          <div className="min-h-screen flex items-center justify-center bg-gray-100">

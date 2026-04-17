@@ -1,6 +1,9 @@
 import { useState } from "react";
-import {Link}from "react-router-dom";
+import {Link, useNavigate}from "react-router-dom";
+import axios from "axios";
+
 export default function Signup() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -14,11 +17,17 @@ export default function Signup() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Signup Data:", formData);
-
-    // Backend API integration next
+    try{
+      const response = await axios.post("http://localhost:5000/auth/signup",
+        formData);
+        alert(response.data.message);
+        navigate("/login")
+    }
+    catch(error){
+      alert(error.response?.data?.message || "signup failed");
+    }
   };
 
   return (
